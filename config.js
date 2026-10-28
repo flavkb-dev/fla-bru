@@ -14,3 +14,7 @@ export const PESSOAS = {
   "flavkb@gmail.com": "fla",
   "assento.corredor@gmail.com": "assento no corredor"
 };
+
+export const SAUDACAO = {
+  "assento.corredor@gmail.com": "Assento no Corredor"
+};
