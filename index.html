@@ -362,7 +362,8 @@ dialog h2{font-size:22px}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, setDoc, updateDoc, deleteDoc, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { firebaseConfig, PESSOAS } from "./config.js";
+import * as CFG from "./config.js";
+const firebaseConfig = CFG.firebaseConfig, PESSOAS = CFG.PESSOAS || {}, SAUDACAO = CFG.SAUDACAO || {};
 
 const CATS = ["Ingresso","Viagem","Presente","Comida","Transporte","Outro"];
 const NAME = {fla:"Flá", bru:"Bru"};
@@ -743,7 +744,9 @@ if(!configured){
     const email=(user.email||"").trim().toLowerCase();
     const who = quemE(email);
     me = who || "fla";
-    $("#who").innerHTML = who ? `Olá, <b class="${me==='fla'?'f':'b'}">${NAME[me]}</b>` : esc(email);
+    const kS = Object.keys(SAUDACAO).find(e => e.trim().toLowerCase() === email);
+    const nomeOla = (kS && String(SAUDACAO[kS]).trim()) || (who ? NAME[me] : email);
+    $("#who").innerHTML = `Olá, <b class="${!who?'':me==='fla'?'f':'b'}">${esc(nomeOla)}</b>`;
     $("#login").hidden=true; $("#app").hidden=false;
     db = adapter;
     unsubs.push(db.collection("itens").onSnapshot(s=>{ items=s.docs.map(d=>({id:d.id,...d.data()})); render(); }, permErr));
