@@ -725,14 +725,25 @@ if(!configured){
       onSnapshot: (next, err) => onSnapshot(collection(store,c), s=>next({docs:s.docs.map(x=>({id:x.id, data:()=>x.data()}))}), err)
     })
   };
+  // aceita "fla", "Flá", "Flávia", "bru", "Bruna"... e e-mails com maiúsculas no config.js
+  const semAcento = v => String(v||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  const quemE = email => {
+    const k = Object.keys(PESSOAS||{}).find(e => e.trim().toLowerCase() === email);
+    if(!k) return null;
+    const v = semAcento(PESSOAS[k]);
+    return v.startsWith("fl") ? "fla" : v.startsWith("br") ? "bru" : null;
+  };
+  const lmsg = t => { const m=$("#lMsg"); m.hidden=!t; m.textContent=t||""; };
   let unsubs=[];
   const permErr = e => { if(e?.code==="permission-denied"){ const n=$("#notice"); n.hidden=false; n.textContent="Este e-mail não tem permissão para ver os dados. Confira as regras do Firestore no passo a passo."; } };
   onAuthStateChanged(auth, user=>{
     unsubs.forEach(u=>u()); unsubs=[];
-    if(!user){ db=null; items=[];pays=[];fechs=[]; $("#app").hidden=true; $("#login").hidden=false; return; }
-    const email=(user.email||"").toLowerCase();
-    me = PESSOAS[email] || "fla";
-    $("#who").innerHTML = PESSOAS[email] ? `Olá, <b class="${me==='fla'?'f':'b'}">${NAME[me]}</b>` : esc(email);
+    if(!user){ db=null; items=[];pays=[];fechs=[]; $("#fLogin").reset(); lmsg(""); $("#app").hidden=true; $("#login").hidden=false; return; }
+    $("#fLogin").reset();
+    const email=(user.email||"").trim().toLowerCase();
+    const who = quemE(email);
+    me = who || "fla";
+    $("#who").innerHTML = who ? `Olá, <b class="${me==='fla'?'f':'b'}">${NAME[me]}</b>` : esc(email);
     $("#login").hidden=true; $("#app").hidden=false;
     db = adapter;
     unsubs.push(db.collection("itens").onSnapshot(s=>{ items=s.docs.map(d=>({id:d.id,...d.data()})); render(); }, permErr));
@@ -740,7 +751,6 @@ if(!configured){
     unsubs.push(db.collection("acertos").onSnapshot(s=>{ pays=s.docs.map(d=>({id:d.id,...d.data()})); render(); }, permErr));
     render();
   });
-  const lmsg = t => { const m=$("#lMsg"); m.hidden=!t; m.textContent=t||""; };
   $("#fLogin").addEventListener("submit", async ev=>{
     ev.preventDefault(); lmsg(""); $("#btnLogin").disabled=true; $("#btnLogin").textContent="Entrando…";
     try{ await signInWithEmailAndPassword(auth, $("#lEmail").value.trim(), $("#lPass").value); }
