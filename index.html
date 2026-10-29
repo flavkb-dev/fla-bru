@@ -20,18 +20,21 @@
 :root{
   --bg:#f3f4f8; --surface:#ffffff; --sunk:#eaecf2; --ink:#1a1c29; --muted:#626880; --line:#dcdfe8;
   --fla:#c2255c; --fla-soft:#fce6ee; --bru:#0b7c71; --bru-soft:#daf2ee;
-  --act:#1a1c29; --act-fg:#ffffff; --ok:#2b8a3e; --warn:#b35c00;
+  --act:#1a1c29; --act-fg:#ffffff;
+  --c-ingresso:#6741d9; --c-viagem:#1971c2; --c-presente:#d9480f; --c-comida:#8a5a12; --c-transporte:#0c8599; --c-outro:#626880; --ok:#2b8a3e; --warn:#b35c00;
   --display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
   --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#11121a; --surface:#1a1c27; --sunk:#232634; --ink:#eceef6; --muted:#9aa0b6; --line:#2d3040;
   --fla:#f26b9a; --fla-soft:#3a1b29; --bru:#3fcab9; --bru-soft:#11332f;
-  --act:#eceef6; --act-fg:#11121a; --ok:#69db7c; --warn:#ffa94d; color-scheme:dark}}
+  --act:#eceef6; --act-fg:#11121a;
+  --c-ingresso:#9775fa; --c-viagem:#4dabf7; --c-presente:#ff8a4c; --c-comida:#e0b25c; --c-transporte:#3bc9db; --c-outro:#9aa0b6; --ok:#69db7c; --warn:#ffa94d; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#11121a; --surface:#1a1c27; --sunk:#232634; --ink:#eceef6; --muted:#9aa0b6; --line:#2d3040;
   --fla:#f26b9a; --fla-soft:#3a1b29; --bru:#3fcab9; --bru-soft:#11332f;
-  --act:#eceef6; --act-fg:#11121a; --ok:#69db7c; --warn:#ffa94d; color-scheme:dark}
+  --act:#eceef6; --act-fg:#11121a;
+  --c-ingresso:#9775fa; --c-viagem:#4dabf7; --c-presente:#ff8a4c; --c-comida:#e0b25c; --c-transporte:#3bc9db; --c-outro:#9aa0b6; --ok:#69db7c; --warn:#ffa94d; color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-tap-highlight-color:transparent;
@@ -82,17 +85,54 @@ button{cursor:pointer}
 .next{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
 
 /* ticket stub */
-.ticket{position:relative;display:grid;grid-template-columns:64px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:12px;min-width:0;cursor:pointer;text-align:left;padding:0;width:100%}
-.ticket:hover{border-color:var(--muted)}
-.ticket .stub{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;border-right:2px dashed var(--line);position:relative}
-.ticket .stub::before,.ticket .stub::after{content:"";position:absolute;right:-8px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:1px solid var(--line)}
-.ticket .stub::before{top:-8px;border-top-color:transparent;border-left-color:transparent;transform:rotate(45deg)}
-.ticket .stub::after{bottom:-8px;border-bottom-color:transparent;border-right-color:transparent;transform:rotate(45deg)}
+/* cartões de plano: um visual por categoria */
+.ticket{--cat:var(--c-outro);position:relative;display:grid;grid-template-columns:68px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:12px;min-width:0;cursor:pointer;text-align:left;padding:0;width:100%;overflow:visible}
+.ticket:hover{border-color:var(--cat)}
+.ticket.t-ingresso{--cat:var(--c-ingresso)} .ticket.t-viagem{--cat:var(--c-viagem)} .ticket.t-presente{--cat:var(--c-presente)}
+.ticket.t-comida{--cat:var(--c-comida)} .ticket.t-transporte{--cat:var(--c-transporte)}
+.ticket .stub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px 4px;position:relative;border-radius:11px 0 0 11px;
+  background:color-mix(in srgb,var(--cat) 12%,var(--surface));color:var(--cat)}
 .stub .d{font-family:var(--display);font-weight:800;font-size:26px;line-height:1}
-.stub .m{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.stub .m{font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;opacity:.85}
 .ticket .info{padding:10px 12px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ticket .kind{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cat)}
+.ico{width:14px;height:14px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ticket .t{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ticket .meta{font-size:13px;color:var(--muted)}
+.ticket .meta{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Ingresso: canhoto picotado com recortes */
+.t-ingresso .stub{border-right:2px dashed color-mix(in srgb,var(--cat) 45%,var(--line));border-radius:11px 0 0 11px}
+.t-ingresso .stub::before,.t-ingresso .stub::after{content:"";position:absolute;right:-8px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:1px solid var(--line)}
+.t-ingresso .stub::before{top:-8px;border-top-color:transparent;border-left-color:transparent;transform:rotate(45deg)}
+.t-ingresso .stub::after{bottom:-8px;border-bottom-color:transparent;border-right-color:transparent;transform:rotate(45deg)}
+
+/* Viagem: cartão de embarque, faixa sólida e rota pontilhada */
+.t-viagem .stub{background:var(--cat);color:var(--surface)}
+.t-viagem .stub .m{opacity:.9}
+.route{display:flex;align-items:center;gap:6px;color:var(--cat);font-size:12px;font-weight:700;min-width:0}
+.route .line{flex:1;min-width:24px;border-top:2px dotted color-mix(in srgb,var(--cat) 55%,transparent)}
+.route .dot{width:7px;height:7px;border-radius:50%;border:2px solid var(--cat);flex:none}
+.route .place{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
+
+/* Presente: etiqueta com furo e fita */
+.t-presente .stub{border-right:1px solid color-mix(in srgb,var(--cat) 30%,var(--line))}
+.t-presente .stub::before{content:"";position:absolute;top:8px;left:50%;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--bg);border:1.5px solid var(--cat)}
+.t-presente .stub .d{margin-top:8px}
+.t-presente::after{content:"";position:absolute;top:-1px;bottom:-1px;right:22px;width:7px;background:color-mix(in srgb,var(--cat) 35%,transparent)}
+
+/* Comida: notinha com total pontilhado e borda serrilhada */
+.t-comida{border-radius:12px 12px 4px 4px}
+.t-comida .stub{border-radius:11px 0 0 3px;border-right:1px solid color-mix(in srgb,var(--cat) 25%,var(--line))}
+.receipt{display:flex;align-items:baseline;gap:6px;font-size:12.5px;font-weight:700;color:var(--ink)}
+.receipt .lead{flex:1;border-bottom:1.5px dotted var(--muted);transform:translateY(-3px);min-width:16px}
+
+/* Transporte: linha de trajeto */
+.t-transporte .stub{border-right:3px solid var(--cat)}
+
+/* chip de categoria na lista */
+.catchip{display:inline-flex;align-items:center;gap:4px;color:var(--cat);font-weight:600}
+.cat-ingresso{--cat:var(--c-ingresso)} .cat-viagem{--cat:var(--c-viagem)} .cat-presente{--cat:var(--c-presente)}
+.cat-comida{--cat:var(--c-comida)} .cat-transporte{--cat:var(--c-transporte)} .cat-outro{--cat:var(--c-outro)}
 .when{font-size:12px;font-weight:700;color:var(--fla)}
 .when.far{color:var(--muted)}
 
@@ -442,15 +482,37 @@ function renderBalance(){
   const tot=t.pagoF+t.pagoB||1;
   $("#bTrack").innerHTML = `<span style="width:${t.pagoF/tot*100}%;background:var(--fla)"></span><span style="width:${t.pagoB/tot*100}%;background:var(--bru)"></span>`;
 }
+const ICONS = {
+  ingresso:'<path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4z"/><path d="M14 6v12" stroke-dasharray="2 2"/>',
+  viagem:'<path d="M10.5 13.5 4 12l-1 1 5 3 3 5 1-1-1.5-6.5L16 9.5l3.5-.5a1.5 1.5 0 0 0 0-3L16 6.5z"/>',
+  presente:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8S10.5 4 8 4.5 7.5 8 12 8zm0 0s1.5-4 4-3.5S16.5 8 12 8z"/>',
+  comida:'<path d="M7 3v8a2 2 0 0 0 2 2v8M5 3v5M9 3v5M16 21V3c2 1 3 4 3 7h-3"/>',
+  transporte:'<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M8 17v3M16 17v3"/><circle cx="8.5" cy="14" r=".6"/><circle cx="15.5" cy="14" r=".6"/>',
+  outro:'<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.2"/>'
+};
+const catSlug = c => { const k=String(c||"").toLowerCase(); return ICONS[k]? k : "outro"; };
+const icon = c => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICONS[catSlug(c)]}</svg>`;
 function ticket(it){
   const n = daysUntil(it.data), [y,m,d]=it.data.split("-");
-  const o=owed(it), pc = it.pagoPor==="fla"?"f":"b";
-  return `<button type="button" class="ticket" data-edit="${esc(it.id)}">
+  const pc = it.pagoPor==="fla"?"f":"b", cat=catSlug(it.categoria);
+  const when = `<div class="when ${n>7||n<0?'far':''}">${whenTxt(n)}${it.pagoPor?` · <span class="${pc}">pago por ${NAME[it.pagoPor]}</span>`:""}</div>`;
+  const hl = [it.hora,it.local].filter(Boolean).map(esc).join(" · ");
+  let mid = "";
+  if(cat==="ingresso"){
+    mid = (hl?`<div class="meta">${hl}</div>`:"") + `<div class="meta">${it.ingressoCom?holderHTML(it):"Ingresso com quem? Toque para marcar"}</div>`;
+  } else if(cat==="viagem" || cat==="transporte"){
+    mid = `<div class="route"><span class="dot"></span><span class="line"></span>${icon(cat)}<span class="line"></span><span class="place">${esc(it.local||"destino")}</span></div>` + (it.hora?`<div class="meta">${cat==="viagem"?"Embarque":"Saída"} às ${esc(it.hora)}</div>`:"");
+  } else if(cat==="comida"){
+    mid = (hl?`<div class="meta">${hl}</div>`:"") + (+it.valor?`<div class="receipt"><span>Total</span><span class="lead"></span><span class="num">${money(it.valor)}</span></div>`:"");
+  } else if(cat==="presente"){
+    mid = `<div class="meta">${hl || "Para presentear"}</div>`;
+  } else {
+    mid = hl?`<div class="meta">${hl}</div>`:"";
+  }
+  return `<button type="button" class="ticket t-${cat}" data-edit="${esc(it.id)}">
     <div class="stub"><div class="d num">${+d}</div><div class="m">${MES[m-1]}</div></div>
-    <div class="info"><div class="t">${esc(it.desc)}</div>
-      <div class="meta">${[it.hora,it.local].filter(Boolean).map(esc).join(" · ")||esc(it.categoria||"")}</div>
-      ${it.categoria==="Ingresso"?`<div class="meta">${it.ingressoCom?holderHTML(it):"Ingresso com quem? Toque para marcar"}</div>`:""}
-      <div class="when ${n>7||n<0?'far':''}">${whenTxt(n)}${it.pagoPor?` · <span class="${pc}">pago por ${NAME[it.pagoPor]}</span>`:""}</div></div></button>`;
+    <div class="info"><div class="kind">${icon(cat)}<span>${esc(it.categoria||"Outro")}</span></div>
+      <div class="t">${esc(it.desc)}</div>${mid}${when}</div></button>`;
 }
 function renderNext(){
   const today=todayISO();
@@ -469,7 +531,7 @@ function renderList(){
     const oweTxt = o.who&&o.amt>0 ? `<span class="${o.who==='fla'?'f':'b'}">${NAME[o.who]} deve ${money(o.amt)}</span>` : `<span style="color:var(--muted)">—</span>`;
     return `<button type="button" class="row" data-edit="${esc(it.id)}">
       <div style="min-width:0"><div class="desc">${esc(it.desc)}</div>
-        <div class="small">${pay}<span>${esc(it.categoria||"")}</span>${it.data?`<span>· ${fmtDate(it.data)}</span>`:""}${it.divisao&&it.divisao!=="meio"?`<span>· ${it.divisao==="custom"?"divisão própria":"só da "+NAME[it.divisao]}</span>`:""}${holderHTML(it)}${it.fechamento?`<span class="chip lock">${esc(fechName(it.fechamento))}</span>`:""}</div></div>
+        <div class="small">${pay}<span class="catchip cat-${catSlug(it.categoria)}">${icon(it.categoria)}${esc(it.categoria||"")}</span>${it.data?`<span>· ${fmtDate(it.data)}</span>`:""}${it.divisao&&it.divisao!=="meio"?`<span>· ${it.divisao==="custom"?"divisão própria":"só da "+NAME[it.divisao]}</span>`:""}${holderHTML(it)}${it.fechamento?`<span class="chip lock">${esc(fechName(it.fechamento))}</span>`:""}</div></div>
       <div class="val num">${money(it.valor)}</div>
       <div class="owe num">${oweTxt}</div></button>`;
   }).join("") + `<div class="foot num"><span>${pl(rows.length,"gasto","gastos")}</span><span>${money(sum)}</span></div>`;

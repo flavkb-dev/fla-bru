@@ -1,6 +1,6 @@
 // Guarda o app no celular para abrir rápido e sem internet.
 // Ao mudar o código, aumente o número da versão abaixo para os celulares baixarem a novidade.
-const VERSION = "fla-bru-v6";
+const VERSION = "fla-bru-v7";
 const SHELL = ["./", "index.html", "config.js", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", e => {
